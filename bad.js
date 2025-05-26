@@ -1,3 +1,3 @@
-let foo = "bar"
-//console.log(foo )
+const foo = 'bar'
+// console.log(foo )
 console.log(foo)

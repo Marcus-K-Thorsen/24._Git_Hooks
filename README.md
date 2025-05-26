@@ -8,24 +8,24 @@ Git hooks are scripts that Git runs automatically at certain points in your work
 
 ## Step-by-Step: Creating a Simple Pre-commit Hook
 
-**This guide uses Windows PowerShell, but works similarly in Git Bash.**
+**This guide is for the `24._Git_Hooks` folder and uses Windows PowerShell.**
 
-1. **Open PowerShell** and navigate to your project folder:
+1. **Open PowerShell** and navigate to your `24._Git_Hooks` folder (this is your "project root" for this exercise):
     ```powershell
     cd "C:\Users\Marcus\Desktop\KEA\KEA_Studie\System Integration\Marcus_K_Thorsen_System_Integration\24._Git_Hooks"
     ```
 
-2. **Initialize a Git repository** (if you haven't already):
+2. **Initialize a Git repository** (if you haven't already, in the `24._Git_Hooks` folder):
     ```powershell
     git init
     ```
 
-3. **Navigate to the hooks folder:**
+3. **Navigate to the hooks folder** (inside the `.git` folder in `24._Git_Hooks`):
     ```powershell
     cd .git\hooks
     ```
 
-4. **Create or edit the `pre-commit` file:**
+4. **Create or edit the `pre-commit` file** (still in `.git\hooks`):
     - If a `pre-commit.sample` file exists, rename it:
       ```powershell
       mv pre-commit.sample pre-commit
@@ -47,11 +47,11 @@ Git hooks are scripts that Git runs automatically at certain points in your work
     ```
 
 6. **Test your hook:**
-    - Go back to your project root:
+    - Go back to your `24._Git_Hooks` folder:
       ```powershell
       cd ../..
       ```
-    - Make a change and commit:
+    - Make a change to any file in `24._Git_Hooks`, then run:
       ```powershell
       git add .
       git commit -m "Test pre-commit hook"
@@ -62,14 +62,14 @@ Git hooks are scripts that Git runs automatically at certain points in your work
 
 ## How to Change the Message
 
-To change what is echoed when you commit, simply edit the `.git/hooks/pre-commit` file and replace `"Hello, world!"` with any message you want. For example:
+To change what is echoed when you commit, simply edit the `.git/hooks/pre-commit` file (inside `24._Git_Hooks/.git/hooks/`) and replace `"Hello, world!"` with any message you want. For example:
 
 ```sh
 #!/bin/sh
 echo "Don't forget to check your code style!"
 ```
 
-Save the file. The next time you commit, your new message will appear.
+Save the file. The next time you commit in the `24._Git_Hooks` folder, your new message will appear.
 
 ---
 
@@ -77,6 +77,73 @@ Save the file. The next time you commit, your new message will appear.
 - Git hooks let you automate actions in your Git workflow.
 - The `pre-commit` hook can be used to display messages or run checks before a commit.
 - Edit the `pre-commit` file to change the message or add more commands.
+---
+
+
+## Step-by-Step: Adding Linting with StandardJS
+
+**This will make sure you can't commit JavaScript files with formatting errors in the `24._Git_Hooks` folder.**
+
+1. **Go to your `24._Git_Hooks` folder in PowerShell:**
+    ```powershell
+    cd "C:\Users\Marcus\Desktop\KEA\KEA_Studie\System Integration\Marcus_K_Thorsen_System_Integration\24._Git_Hooks"
+    ```
+
+2. **Install StandardJS locally:**
+    ```powershell
+    npm install --save-dev standard
+    ```
+
+3. **Edit your `.git/hooks/pre-commit` file** (open it in Notepad or VS Code):
+    ```sh
+    #!/bin/sh
+    # Find all staged JS files and lint them with StandardJS
+    STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.jsx?$')
+    if [ "$STAGED_FILES" = "" ]; then
+      exit 0
+    fi
+
+    npx standard $STAGED_FILES
+    if [ $? -ne 0 ]; then
+      echo "StandardJS found formatting errors. Commit aborted."
+      exit 1
+    fi
+    ```
+
+4. **(Optional) Make the hook executable (if using Git Bash):**
+    ```sh
+    chmod +x .git/hooks/pre-commit
+    ```
+
+5. **Test the linting hook:**
+    - Create a JavaScript file in `24._Git_Hooks` with a formatting error (e.g., `bad.js`).
+    ```js
+    const foo = 'bar'
+    console.log(foo )
+    ```
+    - Stage it:
+      ```powershell
+      git add bad.js
+      ```
+    - Try to commit:
+      ```powershell
+      git commit -m "Test lint hook"
+      ```
+    - The commit should be blocked if there are lint errors, and you’ll see a message.
+    - Run the fix command:
+      ```powershell
+      npx standard --fix
+      ```
+    - Then try and commit after the linting has been fixed.
+
+---
+
+## How it works
+
+- When you try to commit in the `24._Git_Hooks` folder, the hook runs StandardJS on all staged JS files.
+- If there are formatting errors, the commit is stopped and you see an error message.
+- Fix the errors (or run `npx standard --fix`), then try again.
+
 ---
 
 # Git hooks pros and cons

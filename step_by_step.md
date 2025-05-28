@@ -5,18 +5,20 @@
 cd "24._Git_Hooks/"
 ```
 
-1. Make sure the [`.git/hooks/pre-commit`](.git\hooks\pre-commit) file already contains:
+2. Make sure the [`.git/hooks/pre-commit`](.git\hooks\pre-commit) file already contains:
 ```sh
 #!/bin/sh
 echo "Hello, world!"
 ```
 
-1. Make a change to any file in the `24._Git_Hooks` folder, then stage the change:
+3. Make a change to any file in the `24._Git_Hooks` folder, then stage the change:
 ```sh
 git add .
 ```
 
-1. Commit the change:
+4. Commit the change:
 ```sh
 git commit -m "Test pre-commit hook"
 ```
+
+You should see `"Hello, world!"` printed in the terminal before the commit completes.
